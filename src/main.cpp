@@ -5,12 +5,12 @@
 #include "SparkFunBME280.h"
 
 
-#define I2C_DISPLAY_SDA 4
-#define I2C_DISPLAY_SCL 5
+#define I2C_DISPLAY_SDA 5
+#define I2C_DISPLAY_SCL 4
 
-// #define I2C_BME_SDA 6
-// #define I2C_BME_SCL 7
-// TwoWire I2Ctwo = TwoWire(1);
+#define I2C_BME_SDA 12
+#define I2C_BME_SCL 16
+TwoWire I2Ctwo = TwoWire(1);
 
 #include "display.h"
 
@@ -40,9 +40,10 @@ void initSensors(void)
   sensorIn.settings.commInterface = I2C_MODE;
   sensorIn.settings.I2CAddress = 0x77;
 
-  sensorOut.settings.commInterface = SPI_MODE;
-  sensorOut.settings.chipSelectPin = 11;
-  // sensorOut.settings.I2CAddress = 0x76;
+  // sensorOut.settings.commInterface = SPI_MODE;
+  // sensorOut.settings.chipSelectPin = 25;
+  sensorOut.settings.commInterface = I2C_MODE;
+  sensorOut.settings.I2CAddress = 0x76;
 
   sensorIn.settings.runMode = 3; //Normal mode
   sensorOut.settings.runMode = 3; //Normal mode
@@ -68,9 +69,10 @@ void initSensors(void)
   sensorOut.settings.humidOverSample = 1;
 
   delay(1000);  //Make sure sensor had enough time to turn on. BME280 requires 2ms to start up.
-  Serial.println(sensorOut.begin(), HEX);
-  Serial.println(sensorIn.begin(), HEX);
-  // Serial.println(sensorIn.beginI2C(wire2), HEX);
+  Serial.println(sensorOut.beginI2C(I2Ctwo), HEX);
+  Serial.println(sensorIn.beginI2C(I2Ctwo), HEX);
+  // Serial.println(sensorOut.begin(), HEX);
+  // Serial.println(sensorIn.begin(), HEX);
 }
 
 void initRelais(void)
@@ -87,7 +89,7 @@ void setup()
   Serial.begin(115200);
   Serial.println();
 
-  // I2Ctwo.begin(I2C_BME_SDA,I2C_BME_SCL,400000);
+  I2Ctwo.begin(I2C_BME_SDA,I2C_BME_SCL,400000);
 
   initDisplay();
   initSensors();
