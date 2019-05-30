@@ -51,6 +51,17 @@ void overlayVent(OLEDDisplay *display, OLEDDisplayUiState* state) {
 
 }
 
+void showSensorOK(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  uint32_t line=0;
+  const uint32_t lh=18;
+  display->setTextAlignment(TEXT_ALIGN_LEFT);
+  display->setFont(ArialMT_Plain_16);
+  // display->drawString(oledCenterX , oledStartY+lh*line++, "IN | OUT");
+  display->drawString(0 , oledStartY+lh*line++, "IN : "+((sensors_dpIn_ != NaN)?"Ok","FAILed"));
+  display->drawString(0 , oledStartY+lh*line++, "OUT: "+((sensors_dpOut_ != NaN)?"Ok","FAILed"));
+
+}
+
 void showFrameBME280Values(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
   uint32_t line=0;
   const uint32_t lh=18;
@@ -59,7 +70,6 @@ void showFrameBME280Values(OLEDDisplay *display, OLEDDisplayUiState* state, int1
   // display->drawString(oledCenterX , oledStartY+lh*line++, "IN | OUT");
   display->drawString(oledCenterX , oledStartY+lh*line++, twoDigits((int)sensors_tempIn_) + "*C | "  + twoDigits((int)sensors_tempOut_)+"*C");  
   display->drawString(oledCenterX , oledStartY+lh*line++, twoDigits((int)sensors_rhIn_) + "rH | "  + twoDigits((int)sensors_rhOut_)+"rH");  
-
 }
 
 void showFrameDewPointAndFan(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y)
@@ -84,10 +94,10 @@ void showFrameFanRuntime(OLEDDisplay *display, OLEDDisplayUiState* state, int16_
 
 
 //define Frames
-FrameCallback frames[] = { showFrameBME280Values, showFrameDewPointAndFan, showFrameFanRuntime};
+FrameCallback frames[] = { showSensorOK, showFrameBME280Values, showFrameDewPointAndFan, showFrameFanRuntime};
 
 // how many frames are there?
-int frameCount = 3;
+int frameCount = 4;
 
 // Overlays are statically drawn on top of a frame eg. a clock
 OverlayCallback overlays[] = { overlayVent };

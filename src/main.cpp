@@ -5,12 +5,26 @@
 #include "SparkFunBME280.h"
 
 
+/*
+Notes:
+
+* auf I2C kein Device gefunden wenn auf I2Ctwo gesucht wird.
+* Mit BME280 an VDD+GND angehängt, kein Flashen möglich? Saugt BME280 soviel?
+* mit BME280 an SPI angehängt -> Flash Read Error ???
+
+
+*/
+
+
 #define I2C_DISPLAY_SDA 5
 #define I2C_DISPLAY_SCL 4
 
-#define I2C_BME_SDA 12
-#define I2C_BME_SCL 16
+#define I2C_BME1_SDA 13
+#define I2C_BME1_SCL 16
+#define I2C_BMP2_SDA 15
+#define I2C_BMP2_SCL 14
 TwoWire I2Ctwo = TwoWire(1);
+TwoWire I2Cthree = TwoWire(2);
 
 #include "display.h"
 
@@ -37,8 +51,11 @@ void initSensors(void)
 {
 
   //Initialize Sensors
+  // sensorIn.settings.commInterface = SPI_MODE;
+  // sensorIn.settings.chipSelectPin = 24;
   sensorIn.settings.commInterface = I2C_MODE;
   sensorIn.settings.I2CAddress = 0x77;
+
 
   // sensorOut.settings.commInterface = SPI_MODE;
   // sensorOut.settings.chipSelectPin = 25;
@@ -69,8 +86,8 @@ void initSensors(void)
   sensorOut.settings.humidOverSample = 1;
 
   delay(1000);  //Make sure sensor had enough time to turn on. BME280 requires 2ms to start up.
+  Serial.println(sensorIn.beginI2C(I2Cthree), HEX);
   Serial.println(sensorOut.beginI2C(I2Ctwo), HEX);
-  Serial.println(sensorIn.beginI2C(I2Ctwo), HEX);
   // Serial.println(sensorOut.begin(), HEX);
   // Serial.println(sensorIn.begin(), HEX);
 }
@@ -89,7 +106,8 @@ void setup()
   Serial.begin(115200);
   Serial.println();
 
-  I2Ctwo.begin(I2C_BME_SDA,I2C_BME_SCL,400000);
+  I2Cthree.begin(I2C_BMP2_SDA,I2C_BMP2_SCL,200000);
+  I2Ctwo.begin(I2C_BME1_SDA,I2C_BME1_SCL,200000);
 
   initDisplay();
   initSensors();
