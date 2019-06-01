@@ -4,6 +4,7 @@
 #include <Wire.h>
 #include <SSD1306Wire.h>
 #include <stdint.h>
+#include <math.h>
 // Include the UI lib
 #include "OLEDDisplayUi.h"
 
@@ -53,43 +54,43 @@ void overlayVent(OLEDDisplay *display, OLEDDisplayUiState* state) {
 
 void showSensorOK(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
   uint32_t line=0;
-  const uint32_t lh=18;
+  const uint32_t lh=25;
   display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->setFont(ArialMT_Plain_16);
-  // display->drawString(oledCenterX , oledStartY+lh*line++, "IN | OUT");
-  display->drawString(0 , oledStartY+lh*line++, "IN : "+((sensors_dpIn_ != NaN)?"Ok","FAILed"));
-  display->drawString(0 , oledStartY+lh*line++, "OUT: "+((sensors_dpOut_ != NaN)?"Ok","FAILed"));
+  display->setFont(ArialMT_Plain_24);
+  // display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, "IN | OUT");
+  display->drawStringMaxWidth(0 , oledStartY+lh*line++, screenW,String("IN: ")+(!isnan(sensors_dpIn_)?"Ok":"FAIL"));
+  display->drawStringMaxWidth(0 , oledStartY+lh*line++, screenW,String("OUT: ")+(!isnan(sensors_dpOut_)?"Ok":"FAIL"));
 
 }
 
 void showFrameBME280Values(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
   uint32_t line=0;
-  const uint32_t lh=18;
+  const uint32_t lh=25;
   display->setTextAlignment(TEXT_ALIGN_CENTER);
-  display->setFont(ArialMT_Plain_16);
-  // display->drawString(oledCenterX , oledStartY+lh*line++, "IN | OUT");
-  display->drawString(oledCenterX , oledStartY+lh*line++, twoDigits((int)sensors_tempIn_) + "*C | "  + twoDigits((int)sensors_tempOut_)+"*C");  
-  display->drawString(oledCenterX , oledStartY+lh*line++, twoDigits((int)sensors_rhIn_) + "rH | "  + twoDigits((int)sensors_rhOut_)+"rH");  
+  display->setFont(ArialMT_Plain_24);
+  // display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, "IN | OUT");
+  display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, screenW,twoDigits((int)sensors_tempIn_) + "°C|"  + twoDigits((int)sensors_tempOut_)+"°C");  
+  display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, screenW,twoDigits((int)sensors_rhIn_) + "rH|"  + twoDigits((int)sensors_rhOut_)+"rH");  
 }
 
 void showFrameDewPointAndFan(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y)
 {
   uint32_t line=0;
-  const uint32_t lh=18;
-  display->setFont(ArialMT_Plain_16);
+  const uint32_t lh=25;
+  display->setFont(ArialMT_Plain_24);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->drawString(0,oledStartY+lh*line++, (venting_onoff_)?"Fan ON":"Fan Off");
-  display->drawString(0,oledStartY+lh*line++, twoDigits((int)sensors_dpIn_) +((sensors_dpIn_<=sensors_dpOut_)?" <= ":" >= ")+ twoDigits((int)sensors_dpOut_));  
+  display->drawStringMaxWidth(0,oledStartY+lh*line++, screenW,(venting_onoff_)?"Fan ON":"Fan Off");
+  display->drawStringMaxWidth(0,oledStartY+lh*line++, screenW,twoDigits((int)sensors_dpIn_) +((sensors_dpIn_<=sensors_dpOut_)?" <= ":" >= ")+ twoDigits((int)sensors_dpOut_));  
 }
 
 void showFrameFanRuntime(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y)
 {
   uint32_t line=0;
-  const uint32_t lh=18;
-  display->setFont(ArialMT_Plain_16);
+  const uint32_t lh=25;
+  display->setFont(ArialMT_Plain_24);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->drawString(0,oledStartY+lh*line++, "tOn: "+String(venting_ventingTime_s_)+"s");
-  display->drawString(0,oledStartY+lh*line++, "tOff:"+String(venting_ventingTime_s_)+"s");
+  display->drawStringMaxWidth(0,oledStartY+lh*line++,screenW, "tOn: "+String(venting_ventingTime_s_)+"s");
+  display->drawStringMaxWidth(0,oledStartY+lh*line++,screenW, "tOff:"+String(venting_ventingTime_s_)+"s");
 }
 
 

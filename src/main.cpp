@@ -15,16 +15,17 @@ Notes:
 
 */
 
+#define SPI_BMP_CS 15
 
 #define I2C_DISPLAY_SDA 5
 #define I2C_DISPLAY_SCL 4
 
 #define I2C_BME1_SDA 13
 #define I2C_BME1_SCL 16
-#define I2C_BMP2_SDA 15
-#define I2C_BMP2_SCL 14
+// #define I2C_BMP2_SDA 5
+// #define I2C_BMP2_SCL 4
 TwoWire I2Ctwo = TwoWire(1);
-TwoWire I2Cthree = TwoWire(2);
+// TwoWire I2Cthree = TwoWire(0);
 
 #include "display.h"
 
@@ -52,7 +53,7 @@ void initSensors(void)
 
   //Initialize Sensors
   // sensorIn.settings.commInterface = SPI_MODE;
-  // sensorIn.settings.chipSelectPin = 24;
+  // sensorIn.settings.chipSelectPin = SPI_BMP_CS;
   sensorIn.settings.commInterface = I2C_MODE;
   sensorIn.settings.I2CAddress = 0x77;
 
@@ -85,8 +86,11 @@ void initSensors(void)
   sensorIn.settings.humidOverSample = 1;
   sensorOut.settings.humidOverSample = 1;
 
+  // SPI.setFrequency(400000);
+
   delay(1000);  //Make sure sensor had enough time to turn on. BME280 requires 2ms to start up.
-  Serial.println(sensorIn.beginI2C(I2Cthree), HEX);
+  Serial.println(sensorIn.beginI2C(I2Ctwo), HEX);
+  delay(100);
   Serial.println(sensorOut.beginI2C(I2Ctwo), HEX);
   // Serial.println(sensorOut.begin(), HEX);
   // Serial.println(sensorIn.begin(), HEX);
@@ -106,7 +110,7 @@ void setup()
   Serial.begin(115200);
   Serial.println();
 
-  I2Cthree.begin(I2C_BMP2_SDA,I2C_BMP2_SCL,200000);
+  // I2Cthree.begin(I2C_BMP2_SDA,I2C_BMP2_SCL,200000);
   I2Ctwo.begin(I2C_BME1_SDA,I2C_BME1_SCL,200000);
 
   initDisplay();
