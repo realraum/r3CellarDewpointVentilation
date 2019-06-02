@@ -30,8 +30,10 @@ TwoWire I2Ctwo = TwoWire(1);
 #include "display.h"
 
 //Relay control pins
-#define RELAY1 8
-#define RELAY2 9
+#define RELAY1 25
+#define RELAY2 26
+#define RELAY_OFF LOW
+#define RELAY_ON HIGH
 
 //Set the frequency of updating the relay here, in minutes. The larger the value, the less likely you will have rapid on/off cycling
 #define RELAYINTERVAL 1
@@ -98,11 +100,19 @@ void initSensors(void)
 
 void initRelais(void)
 {
-  //Initialize Relays, set to OFF (which is HIGH, arduino set to LOW at boot)
   pinMode(RELAY1,OUTPUT);
   pinMode(RELAY2,OUTPUT);
-  digitalWrite(RELAY1,HIGH);
-  digitalWrite(RELAY2,HIGH);
+    //test r1
+  digitalWrite(RELAY1,RELAY_ON);
+  digitalWrite(RELAY2,RELAY_OFF);
+  delay(150);
+  //test r2
+  digitalWrite(RELAY1,RELAY_OFF);
+  digitalWrite(RELAY2,RELAY_ON);
+  delay(150);
+  //off
+  digitalWrite(RELAY1,RELAY_OFF);
+  digitalWrite(RELAY2,RELAY_OFF);
 }
 
 void setup()
@@ -115,6 +125,7 @@ void setup()
 
   initDisplay();
   initSensors();
+  initRelais();
 }
 
 
@@ -124,6 +135,8 @@ float sensors_rhIn_=0.0;
 float sensors_rhOut_=0.0;
 float sensors_dpIn_=0.0;
 float sensors_dpOut_=0.0;
+float sensors_pressureIn_=0.0;
+float sensors_pressureOut_=0.0;
 uint32_t sensors_lastupdate_=0;
 
 
@@ -145,11 +158,15 @@ uint32_t taskSensors()
   sensors_rhOut_ = sensorOut.readFloatHumidity();
   sensors_dpIn_ = dewpoint(sensors_tempIn_,sensors_rhIn_);
   sensors_dpOut_ = dewpoint(sensors_tempOut_,sensors_rhOut_);
+  sensors_pressureIn_ = sensorIn.readFloatPressure();
+  sensors_pressureOut_ = sensorOut.readFloatPressure();
   sensors_lastupdate_ = millis();
   Serial.println("Tin: "+String(sensors_tempIn_));
   Serial.println("Tout: "+String(sensors_tempOut_));
   Serial.println("DPin: "+String(sensors_dpIn_));
   Serial.println("DPout: "+String(sensors_dpOut_));
+  Serial.println("HPaIn: "+String(sensors_pressureIn_));
+  Serial.println("HPaOut: "+String(sensors_pressureOut_));
   return 15000;
 }
 
@@ -181,8 +198,8 @@ uint32_t taskVentOrNot()
       venting_onoff_=false;
   }
 
-  digitalWrite(RELAY2,(venting_onoff_)?LOW:HIGH);      
-  digitalWrite(RELAY1,(venting_onoff_)?LOW:HIGH);
+  digitalWrite(RELAY2,(venting_onoff_)?RELAY_ON:RELAY_OFF);
+  digitalWrite(RELAY1,(venting_onoff_)?RELAY_ON:RELAY_OFF);
   return 60000;
 }
 
