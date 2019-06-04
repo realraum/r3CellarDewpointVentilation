@@ -235,7 +235,6 @@ uint32_t nexttime_[num_tasks_] = {0,0,0,0,0};
 
 void loop()
 {
-  uint32_t soonest_nexttime=-1;
   uint32_t now = millis();
 
 
@@ -244,12 +243,6 @@ void loop()
     if (now >= nexttime_[t]) {
       nexttime_[t] = now + tasks_[t]();
     }
-    if (nexttime_[t] < soonest_nexttime)
-    {
-      soonest_nexttime = nexttime_[t];
-    }
   }
-
-  delay(min2(now - soonest_nexttime + 1, 3000));
 }
 
