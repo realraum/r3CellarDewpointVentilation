@@ -1,8 +1,12 @@
+#include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <SSD1306Wire.h>
 #include <stdint.h>
+#include <WiFi.h>
+#include <MQTT.h>
 #include "SparkFunBME280.h"
+#include "mqtt.h"
 
 
 /*
@@ -43,8 +47,6 @@ TwoWire I2Ctwo = TwoWire(1);
 
 //Set cutoff temp for ventilation, celcius
 #define TEMPCUTOFF 15
-
-
 
 //Define sensor objects
 BME280 sensorIn;
@@ -126,6 +128,7 @@ void setup()
   initDisplay();
   initSensors();
   initRelais();
+  initWifiMqtt();
 }
 
 
@@ -203,6 +206,19 @@ uint32_t taskVentOrNot()
   return 60000;
 }
 
+uint32_t taskPublishMqtt()
+{
+  publishMQTTData(sensors_tempIn_,sensors_tempOut_,sensors_rhIn_,sensors_rhOut_,sensors_dpIn_,sensors_dpOut_,sensors_pressureIn_,sensors_pressureOut_);
+  return millis() + 8000;
+}
+
+uint32_t min2(uint32_t a, uint32_t b)
+{
+  uint32_t v=a;
+  if (v > b) {v=b;};
+  return v;
+}
+
 uint32_t min3(uint32_t a, uint32_t b, uint32_t c)
 {
   uint32_t v=a;
@@ -211,32 +227,29 @@ uint32_t min3(uint32_t a, uint32_t b, uint32_t c)
   return v;
 }
 
+
+const int num_tasks_ = 5;
+uint32_t (*tasks_[num_tasks_])() = {taskSensors,taskVentOrNot,taskDisplay,taskWifiMqtt,taskPublishMqtt};
+uint32_t nexttime_[num_tasks_] = {0,0,0,0,0};
+
+
 void loop()
 {
-  static uint32_t nt_sensors=0;
-  static uint32_t nt_vent=0;
-  static uint32_t nt_display=0;
-  uint32_t dl_sensors=0;
-  uint32_t dl_vent=0;
-  uint32_t dl_display=0;
-
+  uint32_t soonest_nexttime=-1;
   uint32_t now = millis();
 
-  if (now >= nt_sensors)
+
+  for (uint32_t t=0; t<num_tasks_; t++)
   {
-    dl_sensors = taskSensors(); 
-    nt_sensors = now + dl_sensors; 
+    if (now >= nexttime_[t]) {
+      nexttime_[t] = now + tasks_[t]();
+    }
+    if (nexttime_[t] < soonest_nexttime)
+    {
+      soonest_nexttime = nexttime_[t];
+    }
   }
-  if (now >= nt_vent)
-  {
-    dl_vent = taskVentOrNot();
-    nt_vent = now + dl_vent;
-  }
-  if (now >= nt_display)
-  {
-    dl_display = taskDisplay();
-    nt_display = now + dl_display;
-  }
-  delay(min3(dl_display,dl_sensors,dl_vent)+1);
+
+  delay(min2(now - soonest_nexttime + 1, 3000));
 }
 
