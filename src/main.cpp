@@ -173,6 +173,12 @@ uint32_t taskSensors()
   return 15000;
 }
 
+uint32_t taskPublishMqtt()
+{
+  publishMQTTData(sensors_tempIn_,sensors_tempOut_,sensors_rhIn_,sensors_rhOut_,sensors_dpIn_,sensors_dpOut_,sensors_pressureIn_,sensors_pressureOut_);
+  return 15000;
+}
+
 //Globals. We use longs because we are counting seconds, 16bit would overrun
 uint32_t venting_ventingTime_s_=0;
 uint32_t venting_notVentingTime_s_=0;
@@ -206,11 +212,6 @@ uint32_t taskVentOrNot()
   return 60000;
 }
 
-uint32_t taskPublishMqtt()
-{
-  publishMQTTData(sensors_tempIn_,sensors_tempOut_,sensors_rhIn_,sensors_rhOut_,sensors_dpIn_,sensors_dpOut_,sensors_pressureIn_,sensors_pressureOut_);
-  return millis() + 8000;
-}
 
 uint32_t min2(uint32_t a, uint32_t b)
 {

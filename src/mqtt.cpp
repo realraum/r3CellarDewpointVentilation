@@ -25,7 +25,6 @@ void initWifiMqtt()
 uint32_t taskWifiMqtt()
 {
   static MQTTSTATE_T mqtt_state = WIFI_DISCONNECTED;
-  uint32_t now_s = millis()/1000;
 
   if (WiFi.status() != WL_CONNECTED)
   {
@@ -50,7 +49,7 @@ uint32_t taskWifiMqtt()
   switch (mqtt_state)
   {
     case WIFI_DISCONNECTED:
-      return now_s+1000;
+      return 1000;
       break;
     case WIFI_CONNECTED_MQTT_DISCONNECTED:
       if (mqttc.connect(wifi_mqttclientid, wifi_mqttuser, wifi_mqttpass))
@@ -59,18 +58,18 @@ uint32_t taskWifiMqtt()
         // mqttc.subscribe("realraum/");
         // mqttc.subscribe("realraum/");
         mqtt_state = MQTT_CONNECTED;
-        return now_s+100;
+        return 1;
       }
       //else
-      return now_s+1000;
+      return 5000; //try connecting not more than every 5s
       break;
     case MQTT_CONNECTED:
-      mqttc.loop();
-      return now_s+250;
+      mqttc.loop();  //mqtt loop can always run
+      return 1;
       break;
     default:
       mqtt_state = WIFI_CONNECTED_MQTT_DISCONNECTED;
-      return now_s+1000;
+      return 1000;
       break;
   }
 }
