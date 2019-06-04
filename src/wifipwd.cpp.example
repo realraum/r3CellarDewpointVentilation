@@ -4,3 +4,5 @@ const char wifi_mqttbroker[] = "mqtt.example.com";
 const char wifi_mqttclientid[] = "myclient";
 const char wifi_mqttuser[] = "";
 const char wifi_mqttpass[] = "";
+const char wifi_mqttlocation_inside[] = "Inside";
+const char wifi_mqttlocation_outside[] = "Outside";
