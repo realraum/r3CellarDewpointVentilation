@@ -74,5 +74,13 @@ void manuallyRunVentForS(uint32_t s)
   {
     s = MAX_MANUAL_VENT_TIME_S;
   }
-  manual_venting_time_until_s_ = millis() + s;
+  if (s > 0)
+  {
+    manual_venting_time_until_s_ = millis()/1000 + s;
+    digitalWrite(RELAY2,RELAY_ON);
+    digitalWrite(RELAY1,RELAY_ON);
+  } else {
+    digitalWrite(RELAY2,RELAY_OFF);
+    digitalWrite(RELAY1,RELAY_OFF);
+  }
 }

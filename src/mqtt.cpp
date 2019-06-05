@@ -15,10 +15,7 @@ void mqttMessageReceived(String &topic, String &payload) {
   if (topic == wifi_mqtt_topic_runvents)
   {
     uint32_t run_s = payload.toInt();
-    if (run_s > 0)
-    {
-      manuallyRunVentForS(run_s);
-    }
+    manuallyRunVentForS(run_s);
   }
 }
 
@@ -73,14 +70,14 @@ uint32_t taskWifiMqtt()
         mqttc.subscribe(wifi_mqtt_topic_runvents);
         // mqttc.subscribe("realraum/");
         mqtt_state = MQTT_CONNECTED;
-        return 1;
+        return 0;
       }
       //else
       return 5000; //try connecting not more than every 5s
       break;
     case MQTT_CONNECTED:
       mqttc.loop();  //mqtt loop can always run
-      return 1;
+      return 0;
       break;
     default:
       mqtt_state = WIFI_CONNECTED_MQTT_DISCONNECTED;
