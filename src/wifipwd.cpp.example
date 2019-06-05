@@ -1,5 +1,13 @@
+#include <Arduino.h>
+
 const char wifi_ssid[] = "ssid";
 const char wifi_pass[] = "pass";
+const bool wifi_usestatic = false;
+const IPAddress wifi_myip(192,168,1,2);
+const IPAddress wifi_gateway(192,168,1,1);
+const IPAddress wifi_subnet(255,255,255,0);
+const IPAddress wifi_dns1(192,168,1,1);
+const IPAddress wifi_dns2(192,168,1,1);
 const char wifi_mqttbroker[] = "mqtt.example.com";
 const char wifi_mqttclientid[] = "myclient";
 const char wifi_mqttuser[] = "";

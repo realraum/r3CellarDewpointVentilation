@@ -16,6 +16,10 @@ void initWifiMqtt()
 {
   Serial.print("WIFI Connecting to:");
   Serial.println(wifi_ssid);
+  if (wifi_usestatic)
+  {
+    WiFi.config(wifi_myip,wifi_gateway,wifi_subnet,wifi_dns1,wifi_dns2);
+  }
   WiFi.begin(wifi_ssid, wifi_pass);
   delay(1000);
   mqttc.begin(wifi_mqttbroker, net);
