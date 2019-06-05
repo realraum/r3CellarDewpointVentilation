@@ -176,7 +176,7 @@ uint32_t taskSensors()
 uint32_t taskPublishMqtt()
 {
   publishMQTTData(sensors_tempIn_,sensors_tempOut_,sensors_rhIn_,sensors_rhOut_,sensors_pressureIn_,sensors_pressureOut_);
-  return 15000;
+  return 45000;
 }
 
 //Globals. We use longs because we are counting seconds, 16bit would overrun
