@@ -14,3 +14,6 @@ const char wifi_mqttuser[] = "";
 const char wifi_mqttpass[] = "";
 const char wifi_mqttlocation_inside[] = "Inside";
 const char wifi_mqttlocation_outside[] = "Outside";
+const char wifi_mqtt_topic_publishprefix[] = "realraum/";
+const char wifi_mqtt_topic_subprefix[] = "action/";
+const String wifi_mqtt_topic_runvents = String(wifi_mqtt_topic_subprefix)+wifi_mqttclientid+"/runvents";

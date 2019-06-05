@@ -1,16 +1,26 @@
 #include <WiFi.h>
 #include <MQTT.h>
-#include "wifipwd.h"
+#include "mqtt.h"
 #include "wifipwd.cpp"
+#include "vent.h"
+#include "config.h"
 
 WiFiClient net;
 MQTTClient mqttc;
 
 typedef enum {WIFI_DISCONNECTED, WIFI_CONNECTED_MQTT_DISCONNECTED, MQTT_CONNECTED} MQTTSTATE_T;
 
-// void mqttMessageReceived(String &topic, String &payload) {
-//   Serial.println("incoming: " + topic + " - " + payload);
-// }
+void mqttMessageReceived(String &topic, String &payload) {
+  Serial.println("MQTT incoming: " + topic + " - " + payload);
+  if (topic == wifi_mqtt_topic_runvents)
+  {
+    uint32_t run_s = payload.toInt();
+    if (run_s > 0)
+    {
+      manuallyRunVentForS(run_s);
+    }
+  }
+}
 
 void initWifiMqtt()
 {
@@ -23,7 +33,7 @@ void initWifiMqtt()
   WiFi.begin(wifi_ssid, wifi_pass);
   delay(1000);
   mqttc.begin(wifi_mqttbroker, net);
-  // mqttc.onMessage(mqttMessageReceived);
+  mqttc.onMessage(mqttMessageReceived);
 }
 
 uint32_t taskWifiMqtt()
@@ -59,7 +69,8 @@ uint32_t taskWifiMqtt()
       if (mqttc.connect(wifi_mqttclientid, wifi_mqttuser, wifi_mqttpass))
       {
         Serial.println("MQTT connected");
-        // mqttc.subscribe("realraum/");
+        //e.g.: realraum/dewpointVent/runvents
+        mqttc.subscribe(wifi_mqtt_topic_runvents);
         // mqttc.subscribe("realraum/");
         mqtt_state = MQTT_CONNECTED;
         return 1;
@@ -78,36 +89,40 @@ uint32_t taskWifiMqtt()
   }
 }
 
-void publishMQTTData(float tempIn,float tempOut,float rhIn,float rhOut,float pressureIn,float pressureOut)
+void publishMQTTData(GlobalSensorData const *sd)
 {
   if (!mqttc.connected())
+  {
+    return;
+  }
+  if (sd == nullptr)
   {
     return;
   }
   Serial.println("MQTT publish");
   // mqttc.publish(topic, msg);
   mqttc.publish(
-    String("realraum/")+wifi_mqttclientid+"/barometer",
-    String("{\"HPa\": ")+String(pressureIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
+    String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/barometer",
+    String("{\"HPa\": ")+String(sd->pressureIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
     );
   mqttc.publish(
-    String("realraum/")+wifi_mqttclientid+"/barometer",
-    String("{\"HPa\": ")+String(pressureOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
+    String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/barometer",
+    String("{\"HPa\": ")+String(sd->pressureOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
     );
   mqttc.publish(
-    String("realraum/")+wifi_mqttclientid+"/temperature",
-    String("{\"Value\": ")+String(tempIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
+    String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/temperature",
+    String("{\"Value\": ")+String(sd->tempIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
     );
   mqttc.publish(
-    String("realraum/")+wifi_mqttclientid+"/temperature",
-    String("{\"Value\": ")+String(tempOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
+    String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/temperature",
+    String("{\"Value\": ")+String(sd->tempOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
     );
   mqttc.publish(
-    String("realraum/")+wifi_mqttclientid+"/relhumidity",
-    String("{\"Value\": ")+String(rhIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
+    String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/relhumidity",
+    String("{\"Value\": ")+String(sd->rhIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
     );
   mqttc.publish(
-    String("realraum/")+wifi_mqttclientid+"/relhumidity",
-    String("{\"Value\": ")+String(rhOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
+    String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/relhumidity",
+    String("{\"Value\": ")+String(sd->rhOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
     );
 }

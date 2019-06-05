@@ -14,5 +14,7 @@ extern const char wifi_mqttuser[];
 extern const char wifi_mqttpass[];
 extern const char wifi_mqttlocation_inside[];
 extern const char wifi_mqttlocation_outside[];
-
+extern const char wifi_mqtt_topic_publishprefix[];
+extern const char wifi_mqtt_topic_subprefix[];
+extern const String wifi_mqtt_topic_runvents;
 #endif

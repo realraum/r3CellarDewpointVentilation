@@ -11,6 +11,7 @@
 #include "display.h"
 // Include custom images
 #include "images.h"
+#include "sensors.h"
 
 
 SSD1306Wire  display(0x3c, 5, 4);
@@ -25,13 +26,6 @@ int oledCenterY = ((screenH-oledStartY)/2)+oledStartY;   // top yellow part is 1
 int oledRadius = 23;
 
 
-extern float sensors_tempIn_;
-extern float sensors_tempOut_;
-extern float sensors_rhIn_;
-extern float sensors_rhOut_;
-extern float sensors_dpIn_;
-extern float sensors_dpOut_;
-extern uint32_t sensors_lastupdate_;
 extern uint32_t venting_ventingTime_s_;
 extern uint32_t venting_notVentingTime_s_;
 extern uint32_t venting_last_change_s_;
@@ -58,8 +52,8 @@ void showSensorOK(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, in
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setFont(ArialMT_Plain_24);
   // display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, "IN | OUT");
-  display->drawStringMaxWidth(0 , oledStartY+lh*line++, screenW,String("IN: ")+(!isnan(sensors_dpIn_)?"Ok":"FAIL"));
-  display->drawStringMaxWidth(0 , oledStartY+lh*line++, screenW,String("OUT: ")+(!isnan(sensors_dpOut_)?"Ok":"FAIL"));
+  display->drawStringMaxWidth(0 , oledStartY+lh*line++, screenW,String("IN: ")+(!isnan(getSensorData()->dpIn)?"Ok":"FAIL"));
+  display->drawStringMaxWidth(0 , oledStartY+lh*line++, screenW,String("OUT: ")+(!isnan(getSensorData()->dpOut)?"Ok":"FAIL"));
 
 }
 
@@ -69,8 +63,8 @@ void showFrameBME280Values(OLEDDisplay *display, OLEDDisplayUiState* state, int1
   display->setTextAlignment(TEXT_ALIGN_CENTER);
   display->setFont(ArialMT_Plain_24);
   // display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, "IN | OUT");
-  display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, screenW,twoDigits((int)sensors_tempIn_) + "°C|"  + twoDigits((int)sensors_tempOut_)+"°C");  
-  display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, screenW,twoDigits((int)sensors_rhIn_) + "rH|"  + twoDigits((int)sensors_rhOut_)+"rH");  
+  display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, screenW,twoDigits((int)getSensorData()->tempIn) + "°C|"  + twoDigits((int)getSensorData()->tempOut)+"°C");  
+  display->drawStringMaxWidth(oledCenterX , oledStartY+lh*line++, screenW,twoDigits((int)getSensorData()->rhIn) + "rH|"  + twoDigits((int)getSensorData()->rhOut)+"rH");  
 }
 
 void showFrameDewPointAndFan(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y)
@@ -80,7 +74,7 @@ void showFrameDewPointAndFan(OLEDDisplay *display, OLEDDisplayUiState* state, in
   display->setFont(ArialMT_Plain_24);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->drawStringMaxWidth(0,oledStartY+lh*line++, screenW,(venting_onoff_)?"Fan ON":"Fan Off");
-  display->drawStringMaxWidth(0,oledStartY+lh*line++, screenW,twoDigits((int)sensors_dpIn_) +((sensors_dpIn_<=sensors_dpOut_)?" <= ":" >= ")+ twoDigits((int)sensors_dpOut_));  
+  display->drawStringMaxWidth(0,oledStartY+lh*line++, screenW,twoDigits((int)getSensorData()->dpIn) +((getSensorData()->dpIn<=getSensorData()->dpOut)?" <= ":" >= ")+ twoDigits((int)getSensorData()->dpOut));
 }
 
 void showFrameFanRuntime(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y)

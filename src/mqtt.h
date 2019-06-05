@@ -1,8 +1,10 @@
 #ifndef MQTT__H
 #define MQTT__H
 
+#include "sensors.h"
+
 void initWifiMqtt();
 uint32_t taskWifiMqtt();
-void publishMQTTData(float tempIn,float tempOut,float rhIn,float rhOut,float pressureIn,float pressureOut);
+void publishMQTTData(GlobalSensorData const *sd);
 
 #endif
