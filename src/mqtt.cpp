@@ -78,7 +78,7 @@ uint32_t taskWifiMqtt()
   }
 }
 
-void publishMQTTData(float tempIn,float tempOut,float rhIn,float rhOut,float dpIn,float dpOut,float pressureIn,float pressureOut)
+void publishMQTTData(float tempIn,float tempOut,float rhIn,float rhOut,float pressureIn,float pressureOut)
 {
   if (!mqttc.connected())
   {
@@ -91,11 +91,23 @@ void publishMQTTData(float tempIn,float tempOut,float rhIn,float rhOut,float dpI
     String("{\"HPa\": ")+String(pressureIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
     );
   mqttc.publish(
+    String("realraum/")+wifi_mqttclientid+"/barometer",
+    String("{\"HPa\": ")+String(pressureOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
+    );
+  mqttc.publish(
     String("realraum/")+wifi_mqttclientid+"/temperature",
     String("{\"Value\": ")+String(tempIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
     );
   mqttc.publish(
     String("realraum/")+wifi_mqttclientid+"/temperature",
     String("{\"Value\": ")+String(tempOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
+    );
+  mqttc.publish(
+    String("realraum/")+wifi_mqttclientid+"/relhumidity",
+    String("{\"Value\": ")+String(rhIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
+    );
+  mqttc.publish(
+    String("realraum/")+wifi_mqttclientid+"/relhumidity",
+    String("{\"Value\": ")+String(rhOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
     );
 }
