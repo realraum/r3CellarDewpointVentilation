@@ -20,6 +20,10 @@
 #define RELAY_OFF LOW
 #define RELAY_ON HIGH
 
+#define BUTTON_PIN  12
+#define BUTTON_PRESSED LOW
+#define BUTTON_DEBOUNCE 100
+
 //Set the frequency of updating the relay here, in minutes. The larger the value, the less likely you will have rapid on/off cycling
 #define RELAYINTERVAL 1
 

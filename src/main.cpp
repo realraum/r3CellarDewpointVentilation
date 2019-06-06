@@ -10,6 +10,12 @@
 #include "config.h"
 #include "display.h"
 
+void initButton()
+{
+  pinMode(BUTTON_PIN,(BUTTON_PRESSED==LOW?INPUT_PULLUP:INPUT_PULLDOWN));
+  digitalWrite(BUTTON_PIN, (BUTTON_PRESSED==HIGH?LOW:HIGH));
+}
+
 
 void setup()
 {                
@@ -20,6 +26,7 @@ void setup()
   initSensors();
   initRelais();
   initWifiMqtt();
+  initButton();
 }
 
 
@@ -30,6 +37,25 @@ uint32_t taskPublishMqtt()
   return 45000;
 }
 
+uint32_t taskButton()
+{
+  static uint16_t btn_count_=0;
+  if (digitalRead(BUTTON_PIN) == BUTTON_PRESSED)
+  {
+    if (btn_count_ < BUTTON_DEBOUNCE+1)
+    {
+      btn_count_++;
+    }
+  } else {
+    btn_count_=0;
+  }
+
+  if (btn_count_ == BUTTON_DEBOUNCE)
+  {
+    manuallyRunVentForS(600); //10min
+  }
+  return 5;
+}
 
 uint32_t min2(uint32_t a, uint32_t b)
 {
@@ -47,9 +73,9 @@ uint32_t min3(uint32_t a, uint32_t b, uint32_t c)
 }
 
 
-const int num_tasks_ = 5;
-uint32_t (*tasks_[num_tasks_])() = {taskSensors,taskVentOrNot,taskDisplay,taskWifiMqtt,taskPublishMqtt};
-uint32_t nexttime_[num_tasks_] = {0,0,0,0,0};
+const int num_tasks_ = 6;
+uint32_t (*tasks_[num_tasks_])() = {taskSensors,taskVentOrNot,taskButton,taskDisplay,taskWifiMqtt,taskPublishMqtt};
+uint32_t nexttime_[num_tasks_] = {0,0,0,0,0,0};
 
 
 void loop()
