@@ -52,7 +52,7 @@ uint32_t taskButton()
 
   if (btn_count_ == BUTTON_DEBOUNCE)
   {
-    manuallyRunVentForS(600); //10min
+    manuallyRunVentForS(900); //15min
   }
   return 5;
 }
