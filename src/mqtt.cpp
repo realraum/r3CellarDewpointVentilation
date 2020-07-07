@@ -116,10 +116,10 @@ void publishMQTTData(GlobalSensorData const *sd)
     );
   mqttc.publish(
     String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/relhumidity",
-    String("{\"Value\": ")+String(sd->rhIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
+    String("{\"Percent\": ")+String(sd->rhIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
     );
   mqttc.publish(
     String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/relhumidity",
-    String("{\"Value\": ")+String(sd->rhOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
+    String("{\"Percent\": ")+String(sd->rhOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
     );
 }
