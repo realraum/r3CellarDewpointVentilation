@@ -100,11 +100,11 @@ void publishMQTTData(GlobalSensorData const *sd)
   // mqttc.publish(topic, msg);
   mqttc.publish(
     String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/barometer",
-    String("{\"HPa\": ")+String(sd->pressureIn)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
+    String("{\"HPa\": ")+String(sd->pressureIn/100.0)+",\"Location\": \""+wifi_mqttlocation_inside+"\"}"
     );
   mqttc.publish(
     String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/barometer",
-    String("{\"HPa\": ")+String(sd->pressureOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
+    String("{\"HPa\": ")+String(sd->pressureOut/100.0)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
     );
   mqttc.publish(
     String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/temperature",
