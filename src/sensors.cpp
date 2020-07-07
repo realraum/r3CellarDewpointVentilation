@@ -28,13 +28,13 @@ void initSensors(void)
   // sensorIn.settings.commInterface = SPI_MODE;
   // sensorIn.settings.chipSelectPin = SPI_BMP_CS;
   sensorIn.settings.commInterface = I2C_MODE;
-  sensorIn.settings.I2CAddress = 0x76;
+  sensorIn.settings.I2CAddress = 0x77;
 
 
   // sensorOut.settings.commInterface = SPI_MODE;
   // sensorOut.settings.chipSelectPin = 25;
   sensorOut.settings.commInterface = I2C_MODE;
-  sensorOut.settings.I2CAddress = 0x77;
+  sensorOut.settings.I2CAddress = 0x76;
 
   sensorIn.settings.runMode = 3; //Normal mode
   sensorOut.settings.runMode = 3; //Normal mode
