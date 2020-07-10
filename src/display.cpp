@@ -84,7 +84,7 @@ void showFrameFanRuntime(OLEDDisplay *display, OLEDDisplayUiState* state, int16_
   display->setFont(ArialMT_Plain_24);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->drawStringMaxWidth(0,oledStartY+lh*line++,screenW, "tOn: "+String(venting_ventingTime_s_)+"s");
-  display->drawStringMaxWidth(0,oledStartY+lh*line++,screenW, "tOff:"+String(venting_ventingTime_s_)+"s");
+  display->drawStringMaxWidth(0,oledStartY+lh*line++,screenW, "tOff: "+String(venting_ventingTime_s_)+"s");
 }
 
 
