@@ -84,3 +84,13 @@ void manuallyRunVentForS(uint32_t s)
     digitalWrite(RELAY1,RELAY_OFF);
   }
 }
+
+bool getVentState(void)
+{
+  return venting_onoff_;
+}
+
+bool getManualOverrideState(void)
+{
+  return (manual_venting_time_until_s_ > 0);
+}

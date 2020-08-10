@@ -33,7 +33,7 @@ void setup()
 
 uint32_t taskPublishMqtt()
 {
-  publishMQTTData(getSensorData());
+  publishMQTTData(getSensorData(),getVentState(),getManualOverrideState());
   return 45000;
 }
 

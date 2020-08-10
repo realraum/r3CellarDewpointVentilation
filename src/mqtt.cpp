@@ -86,7 +86,12 @@ uint32_t taskWifiMqtt()
   }
 }
 
-void publishMQTTData(GlobalSensorData const *sd)
+inline char const * const jsonTrueFalse(bool x)
+{
+  return ((x)?"true":"false");
+}
+
+void publishMQTTData(GlobalSensorData const *sd, bool vent_on, bool due_to_buttonpress)
 {
   if (!mqttc.connected())
   {
@@ -121,5 +126,9 @@ void publishMQTTData(GlobalSensorData const *sd)
   mqttc.publish(
     String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/relhumidity",
     String("{\"Percent\": ")+String(sd->rhOut)+",\"Location\": \""+wifi_mqttlocation_outside+"\"}"
+    );
+  mqttc.publish(
+    String(wifi_mqtt_topic_publishprefix)+wifi_mqttclientid+"/status",
+    String("{\"VentRunning\":")+jsonTrueFalse(vent_on)+",\"DueToButtonpress\":"+jsonTrueFalse(due_to_buttonpress)+"}"
     );
 }

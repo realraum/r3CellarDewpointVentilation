@@ -5,6 +5,6 @@
 
 void initWifiMqtt();
 uint32_t taskWifiMqtt();
-void publishMQTTData(GlobalSensorData const *sd);
+void publishMQTTData(GlobalSensorData const *sd, bool vent_on, bool due_to_buttonpress);
 
 #endif
